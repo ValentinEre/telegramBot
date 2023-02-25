@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "botbookcounter"
+version = "0.1.0"
+description = ""
+authors = ["Eremetko Valentin <32tut32@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+router = "^0.1"
+aiogram = {url = "https://github.com/aiogram/aiogram/archive/refs/heads/dev-3.x.zip"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
