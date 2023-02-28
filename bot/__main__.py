@@ -3,7 +3,7 @@ import os
 import logging
 from aiogram import Dispatcher, Bot
 from commands import register_user_commands
-
+#
 
 async def main() -> None:
 
