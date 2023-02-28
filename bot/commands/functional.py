@@ -10,7 +10,8 @@ async def start_making(message: types.Message) -> None:
     for x in range_of_10:
         video = Video()
         video.get_pic()
-        #video.get_clip()
+        video.resize_pic()
+        video.get_clip()
         video.remove_pic()
         await message.answer(f'{x}. Was generated {video.new_sentence()}')
 
