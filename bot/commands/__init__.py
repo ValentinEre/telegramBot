@@ -1,5 +1,6 @@
-__all__ = ['register_user_commands']
+__all__ = ['register_user_commands', 'cancel_board']
 
+from .cancel import cancel_board
 from aiogram import Router
 from aiogram.filters import CommandStart, Command
 

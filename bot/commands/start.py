@@ -11,5 +11,5 @@ async def start_bot(message: types.Message) -> None:
 
     await message.answer(
         'Menu',
-        reply_markup=menu_builder.as_markup()
+        reply_markup=menu_builder.as_markup(resize_keyboard=True)
     )
