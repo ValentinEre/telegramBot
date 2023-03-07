@@ -8,7 +8,7 @@ def test_download_images():
     query = "dogs"
     num_images = 3
 
-    output_dir = "/test_images"
+    output_dir = "../test_images"
     crawler = GoogleImageCrawler(storage={"root_dir": output_dir})
     crawler.crawl(keyword=query, max_num=num_images)
 
