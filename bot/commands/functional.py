@@ -15,4 +15,4 @@ async def start_making(message: types.Message) -> None:
 
 
 async def stop_making(message: types.Message) -> None:
-    await message.answer('Stop_making')
+    await message.answer('Alive')
