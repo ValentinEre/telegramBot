@@ -11,4 +11,4 @@ from bot.commands.start import start_bot
 def register_user_commands(router: Router) -> None:
     router.message.register(start_bot, CommandStart())
     router.message.register(start_making, Command(commands=['StartBot▶️']))
-    router.message.register(stop_making, Command(commands=['StopBot🛑']))
+    router.message.register(stop_making, Command(commands=['IsAlive🧐']))

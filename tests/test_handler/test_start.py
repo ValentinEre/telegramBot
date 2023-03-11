@@ -13,7 +13,7 @@ async def test_start_hand():
     menu_builder = ReplyKeyboardBuilder()
     menu_builder.add(
         KeyboardButton(text='/StartBot▶️'),
-        KeyboardButton(text='/StopBot🛑')
+        KeyboardButton(text='/IsAlive🧐')
     )
     message.answer.assert_called_with(
         'Menu',

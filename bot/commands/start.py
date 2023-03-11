@@ -6,7 +6,7 @@ async def start_bot(message: types.Message):
     menu_builder = ReplyKeyboardBuilder()
     menu_builder.add(
         KeyboardButton(text='/StartBot▶️'),
-        KeyboardButton(text='/StopBot🛑')
+        KeyboardButton(text='/IsAlive🧐')
     )
 
     return await message.answer(
