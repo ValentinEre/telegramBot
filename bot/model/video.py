@@ -1,8 +1,9 @@
 import glob
+import hashlib
 import random
 
 from PIL import Image
-from icrawler.builtin import GoogleImageCrawler
+from icrawler.builtin import BingImageCrawler
 from moviepy.editor import *
 
 
@@ -13,117 +14,106 @@ class Video:
         # Список игр и тем
         games = {
             "Minecraft": [
-                "Локации и карты",
-                "Строительство и дизайн",
-                "Создание и прокачка персонажей",
-                "Мобы и животные",
-                "Крафтинг и ресурсы",
-                "Фан-арт и косплей"
+                "Landscapes",
+                "Building creations",
+                "Mobs and creatures",
+                "Fan art and cosplay"
             ],
             "Fortnite": [
-                "Скины и косметические предметы",
-                "Локации и карты",
-                "Оружие и снаряжение",
-                "Персонажи и их способности",
-                "События и праздники, связанные с игрой",
-                "Награды и достижения в игре"
+                "Skins and cosmetics",
+                "Locations on the map",
+                "Weapons and equipment"
             ],
             "PUBG": [
-                "Локации и карты",
-                "Оружие и снаряжение",
-                "Персонажи и их способности",
-                "Награды и достижения в игре",
-                "Квесты и миссии",
-                "Фан-арт и косплей"
+                "Locations on the map",
+                "Weapons and equipment",
+                "Fan art and cosplay"
             ],
             "Call of Duty: Mobile": [
-                "Локации и карты",
-                "Оружие и снаряжение",
-                "Персонажи и их способности",
-                "Награды и достижения в игре",
-                "Квесты и миссии",
-                "События и праздники, связанные с игрой"
+                "Locations and maps",
+                "Weapons and equipment",
+                "Rewards and achievements in the game",
+                "Quests and missions"
             ],
             "Clash of Clans": [
-                "Строительство и дизайн",
-                "Создание и прокачка персонажей",
-                "Награды и достижения в игре",
-                "Квесты и миссии",
-                "События и праздники, связанные с игрой",
-                "Фан-арт и косплей"
+                "Rewards and achievements in the game",
+                "Fan art and cosplay"
             ],
-            "Among Us": [
-                "Персонажи и их способности",
-                "Локации и карты",
-                "Фан-арт и косплей",
-                "События и праздники, связанные с игрой",
-                "Награды и достижения в игре",
-                "Моды и дополнения"
+            "Apex Legends": [
+                "Legends",
+                "Locations",
+                "Fan art and cosplay",
+                "Game events and holidays",
+                "Fan art and cosplay"
             ],
             "Roblox": [
-                "Создание и прокачка персонажей",
-                "Локации и карты",
-                "Мини-игры и развлечения",
-                "События и праздники, связанные с игрой",
-                "Награды и достижения в игре",
-                "Фан-арт и косплей"
+                "Character creation and leveling up",
+                "Locations and maps",
+                "Mini-games and entertainment",
+                "Fan art and cosplay"
+            ],
+            "League of Legends": [
+                "Champions ",
+                "Locations",
+                "Fan art and cosplay",
             ]
         }
 
-        game = random.choice(list(games.keys()))
-        theme = random.choice(games[game])
+        self.game = random.choice(list(games.keys()))
+        theme = random.choice(games[self.game])
 
-        self.game_theme = f"${game}_{theme}"
-        self.topic = f"${game} {theme}"
+        self.game_theme = f"${self.game}_{theme}"
+        self.topic = f"${self.game} mobile {theme}"
 
-        self.path_to_pic = "/home/valentin/Изображения/pictures"
-        self.path_to_video = "/home/valentin/Видео/vid"
-        self.path_to_audio = "/home/valentin/Музыка/music"
-        self.path_to_resize_pic = "/home/valentin/Изображения/pic_1080x1920"
+        self.path_to_pic = "/home/valentin/Pictures/pictures"
+        self.path_to_video = "/home/valentin/Videos/video"
+        self.path_to_audio = "/home/valentin/Music/music"
+        self.path_to_resize_pic = "/home/valentin/Pictures/pic_1080x1920"
         self.random_num = random.randrange(77777)
 
-    def get_pic(self):
-        google_crawler = GoogleImageCrawler(
-            downloader_threads=2,
-            storage={"root_dir": f"{self.path_to_pic}"})
-        filters = dict(
-            type="photo",
-            license="commercial,modify"
-        )
-        google_crawler.crawl(self.topic, filters=filters, offset=0, max_num=12, file_idx_offset=0)
+    def download_images(self, keyword, save_dir, num_images):
+        image_hashes = set()
+        num_downloaded = 0
+        while num_downloaded < num_images:
+            crawler = BingImageCrawler(storage={"root_dir": save_dir})
+            crawler.crawl(keyword=keyword, max_num=num_images, min_size=(400, 400))
+            for root, _, files in os.walk(save_dir):
+                for file in files:
+                    filepath = os.path.join(root, file)
+                    with open(filepath, "rb") as f:
+                        image = f.read()
+                    image_hash = hashlib.md5(image).hexdigest()
+                    if image_hash in image_hashes:
+                        os.remove(filepath)
+                    else:
+                        image_hashes.add(image_hash)
+                        num_downloaded += 1
+                    if num_downloaded >= num_images:
+                        break
+                if num_downloaded >= num_images:
+                    break
 
     def resize_pic(self):
-        print("Now resize")
-        images = [f for f in glob.glob(self.path_to_pic + "/*.jpg")]
-
-        pic_num = 0
-        for pic in images:
-            image = Image.open(f"{pic}")
-            new_image = image.resize((1600, 1920))
-            new_image.save(f'{self.path_to_resize_pic + "/" + self.game_theme + str(pic_num)}.jpg')
-            pic_num += 1
+        print("Now resizing images")
+        images = [f for f in glob.glob(f"{self.path_to_pic}/*.jpg")]
+        resized_images = [Image.open(f).resize((1500, 1800)) for f in images]
+        for i, img in enumerate(resized_images):
+            img.save(f"{self.path_to_resize_pic}/name_{i}.jpg")
 
     def get_clip(self):
         print("Making video")
-        dir_for_video = f"{self.path_to_video}"
-        dir_with_pic = f"{self.path_to_resize_pic}"
-        dir_with_audio = self.path_to_audio
-        audio = [f for f in glob.glob(dir_with_audio + "/*.mp3")]
-        images = [f for f in glob.glob(dir_with_pic + "/*.jpg")]
-        if len(images) != 0:
-            clip = [ImageClip(m).set_duration(2) for m in images]
-            audio_file = (AudioFileClip(random.choice(audio))) \
-                .subclip(0, 24).audio_fadein(1).audio_fadeout(1).volumex(0.3)
-            final_clip = concatenate_videoclips(clips=clip, method="compose") \
-                .fadein(1).fadeout(1).set_audio(audio_file)
-            final_clip.write_videofile(
-                f"{dir_for_video}/{self.game_theme}_{self.random_num}.mp4", fps=30)
+        audio_files = [f for f in os.listdir(self.path_to_audio)]
+        audio_file = AudioFileClip(f"{self.path_to_audio}/{random.choice(audio_files)}") \
+            .subclip(0, 24).audio_fadein(1).audio_fadeout(1).volumex(0.3)
+        images = [f for f in os.listdir(self.path_to_resize_pic)]
+        clips = [ImageClip(f"{self.path_to_resize_pic}/{f}").set_duration(2) for f in images]
+        final_clip = concatenate_videoclips(clips=clips, method="compose") \
+            .fadein(1).fadeout(1).set_audio(audio_file)
+        final_clip.write_videofile(f"{self.path_to_video}/{self.game}_{self.random_num}.mp4", fps=30)
 
     def remove_pic(self):
-        dir_pic_default = f"{self.path_to_pic}"
-        dir_pic_resize = f"{self.path_to_resize_pic}"
-        for f in os.listdir(dir_pic_default):
-            os.remove(os.path.join(dir_pic_default, f))
-        for f in os.listdir(dir_pic_resize):
-            os.remove(os.path.join(dir_pic_resize, f))
-        print("Cleaning is over")
+        print("Cleaning up")
+        for folder in (self.path_to_pic, self.path_to_resize_pic):
+            [os.remove(os.path.join(folder, f)) for f in os.listdir(folder)]
+        print("Cleaning done")
+
