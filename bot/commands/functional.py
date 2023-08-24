@@ -1,3 +1,5 @@
+import random
+
 from aiogram import types
 
 from bot.model.video import Video
@@ -14,4 +16,5 @@ async def start_making(message: types.Message) -> None:
 
 
 async def stop_making(message: types.Message) -> None:
-    await message.answer('Alive')
+    random_num = random.choice(range(2))
+    await message.answer(f'{random_num}')
